@@ -1,4 +1,4 @@
-"""YOLOv8 矩形框目标检测数据集划分工具（Python 3.10+，仅标准库）。
+"""YOLOv8 矩形框目标检测数据集划分工具（Python 3.10+，仅标准库）。.
 
 运行：python "YOLOv8数据集划分.py"
 默认交互输入；若只想修改 CONFIG 后运行，将 interactive 改为 False。
@@ -16,27 +16,26 @@ import shutil
 from collections import defaultdict
 from pathlib import Path
 
-
 # ============================================================
 # 用户设置：每次处理一个数据集，修改 dataset_name 即可另存一个数据集。
 # ============================================================
 CONFIG = {
     "datasets_root": r"D:\yolo\yolov8\datasets",  # 所有数据集的总目录
-    "dataset_name": "dataset_obstacle",                 # 本次输出文件夹名称
-    "src_image_dir": r"D:\yolo\obstacle\picture",           # 原脚本中的路径，请按实际修改
-    "src_label_dir": r"D:\yolo\obstacle\label",             # None = 自动查找同名标签
+    "dataset_name": "dataset_obstacle",  # 本次输出文件夹名称
+    "src_image_dir": r"D:\yolo\obstacle\picture",  # 原脚本中的路径，请按实际修改
+    "src_label_dir": r"D:\yolo\obstacle\label",  # None = 自动查找同名标签
     # 与 D:\yolo\txt\material_0.txt 的行顺序一致，类别编号从 0 开始。
-    "class_names": ['obstacle'],
+    "class_names": ["obstacle"],
     # class_names[0] 对应标签编号 0，依此类推，不能根据当前出现的类别重新编号。
-    "stratify_mode": "min_class",                 # min_class / all / single
-    "stratify_class": 0,                          # single 模式关注的类别
+    "stratify_mode": "min_class",  # min_class / all / single
+    "stratify_class": 0,  # single 模式关注的类别
     "val_ratio": 0.20,
     "random_seed": 42,
     "extensions": {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".webp"},
-    "allow_missing_labels": False,                # True = 明确把无标签图片当作背景
+    "allow_missing_labels": False,  # True = 明确把无标签图片当作背景
     # 空 .txt 表示已确认的背景图，始终允许；丢失标签默认报错，避免误当背景。
-    "dry_run": False,                             # True = 只检查和预览，不写文件
-    "interactive": True,                          # 首次使用建议保持 True
+    "dry_run": False,  # True = 只检查和预览，不写文件
+    "interactive": True,  # 首次使用建议保持 True
 }
 
 
@@ -51,13 +50,15 @@ def is_within(child, parent):
 def validate_config(cfg):
     root = Path(clean_path(cfg["datasets_root"])).resolve()
     name = str(cfg["dataset_name"]).strip()
-    reserved = {"CON", "PRN", "AUX", "NUL"} | {
-        f"{prefix}{i}" for prefix in ("COM", "LPT") for i in range(1, 10)
-    }
-    if (not name or name in {".", ".."} or
-            any(c in name for c in '<>:"/\\|?*') or
-            any(ord(c) < 32 for c in name) or name.endswith((".", " ")) or
-            name.split(".")[0].upper() in reserved):
+    reserved = {"CON", "PRN", "AUX", "NUL"} | {f"{prefix}{i}" for prefix in ("COM", "LPT") for i in range(1, 10)}
+    if (
+        not name
+        or name in {".", ".."}
+        or any(c in name for c in '<>:"/\\|?*')
+        or any(ord(c) < 32 for c in name)
+        or name.endswith((".", " "))
+        or name.split(".")[0].upper() in reserved
+    ):
         raise ValueError("dataset_name 必须是合法的单个文件夹名称，不能填写完整路径。")
     dst = (root / name).resolve()
     if dst.parent != root:
@@ -90,11 +91,15 @@ def validate_config(cfg):
 
 
 def find_label_path(image, label_dir):
-    candidates = [label_dir / (image.stem + ".txt")] if label_dir else [
-        image.with_suffix(".txt"),
-        image.parent.parent / "labels" / (image.stem + ".txt"),
-        image.parent / "labels" / (image.stem + ".txt"),
-    ]
+    candidates = (
+        [label_dir / (image.stem + ".txt")]
+        if label_dir
+        else [
+            image.with_suffix(".txt"),
+            image.parent.parent / "labels" / (image.stem + ".txt"),
+            image.parent / "labels" / (image.stem + ".txt"),
+        ]
+    )
     found = list(dict.fromkeys(p.resolve() for p in candidates if p.is_file()))
     if len(found) > 1:
         raise ValueError(f"发现多份同名标签，请明确指定 src_label_dir：{image.name}\n{found}")
@@ -102,7 +107,7 @@ def find_label_path(image, label_dir):
 
 
 def parse_label(label, class_count):
-    """严格检查检测标签；不静默跳过错误行，不修改或重新编号。"""
+    """严格检查检测标签；不静默跳过错误行，不修改或重新编号。."""
     classes = set()
     if label is None:
         return classes
@@ -142,8 +147,10 @@ def stratum_key(classes, mode, target):
 
 def collect_samples(src, label_dir, cfg):
     extensions = {e.lower() for e in cfg["extensions"]}
-    images = sorted((p for p in src.iterdir() if p.is_file() and p.suffix.lower() in extensions),
-                    key=lambda p: (p.name.casefold(), p.name))
+    images = sorted(
+        (p for p in src.iterdir() if p.is_file() and p.suffix.lower() in extensions),
+        key=lambda p: (p.name.casefold(), p.name),
+    )
     if not images:
         raise ValueError(f"目录中没有支持的图片（本工具不递归扫描）：{src}")
     samples, stems, missing = [], set(), []
@@ -157,8 +164,10 @@ def collect_samples(src, label_dir, cfg):
         classes = parse_label(label, len(cfg["class_names"]))
         samples.append((image, label, classes))
     if missing and not cfg["allow_missing_labels"]:
-        raise ValueError(f"{len(missing)} 张图片缺少标签，例如：{', '.join(missing[:8])}\n"
-                         "请补齐标注；仅当确认这些图片没有目标时，设置 allow_missing_labels=True。")
+        raise ValueError(
+            f"{len(missing)} 张图片缺少标签，例如：{', '.join(missing[:8])}\n"
+            "请补齐标注；仅当确认这些图片没有目标时，设置 allow_missing_labels=True。"
+        )
     if missing:
         print(f"注意：{len(missing)} 张缺标签图片将作为背景，并生成空标签。")
     if not any(s[2] for s in samples):
@@ -203,9 +212,8 @@ def split_and_copy(cfg):
         "# YOLOv8 目标检测数据集；类别顺序必须与原始标签一致。\n"
         f"path: {json.dumps(dst.as_posix(), ensure_ascii=False)}\n"
         "train: images/train\nval: images/val\n"
-        f"nc: {len(cfg['class_names'])}\nnames:\n" +
-        "".join(f"  {i}: {json.dumps(name, ensure_ascii=False)}\n"
-                for i, name in enumerate(cfg["class_names"]))
+        f"nc: {len(cfg['class_names'])}\nnames:\n"
+        + "".join(f"  {i}: {json.dumps(name, ensure_ascii=False)}\n" for i, name in enumerate(cfg["class_names"]))
     )
     print("\n将生成 data.yaml：\n" + yaml_text)
     if cfg["dry_run"]:
@@ -227,9 +235,12 @@ def split_and_copy(cfg):
     with (dst / "data.yaml").open("x", encoding="utf-8") as target:
         target.write(yaml_text)
     manifest = {
-        "source_images": str(src), "source_labels": str(labels) if labels else None,
-        "class_names": cfg["class_names"], "seed": cfg["random_seed"],
-        "stratify_mode": cfg["stratify_mode"], "stratify_class": cfg["stratify_class"],
+        "source_images": str(src),
+        "source_labels": str(labels) if labels else None,
+        "class_names": cfg["class_names"],
+        "seed": cfg["random_seed"],
+        "stratify_mode": cfg["stratify_mode"],
+        "stratify_class": cfg["stratify_class"],
         "requested_val_ratio": cfg["val_ratio"],
         "train": [samples[i][0].name for i in train],
         "val": [samples[i][0].name for i in val],
@@ -237,8 +248,10 @@ def split_and_copy(cfg):
     with (dst / "split_manifest.json").open("x", encoding="utf-8") as target:
         json.dump(manifest, target, ensure_ascii=False, indent=2)
     print("\n划分完成，原始图片和标签未改动。训练检查命令：")
-    print(f'yolo detect train model=yolov8n.pt data="{(dst / "data.yaml").as_posix()}" '
-          'epochs=1 imgsz=640 batch=4 device=0 workers=0')
+    print(
+        f'yolo detect train model=yolov8n.pt data="{(dst / "data.yaml").as_posix()}" '
+        "epochs=1 imgsz=640 batch=4 device=0 workers=0"
+    )
     return dst
 
 
@@ -263,7 +276,9 @@ def main():
             cfg["stratify_mode"] = ask("分层策略 min_class/all/single", cfg["stratify_mode"])
             if cfg["stratify_mode"] == "single":
                 cfg["stratify_class"] = int(ask("关注的类别编号", cfg["stratify_class"]))
-            cfg["allow_missing_labels"] = ask("把缺失标签视为背景？y/n", "y" if cfg["allow_missing_labels"] else "n").lower() == "y"
+            cfg["allow_missing_labels"] = (
+                ask("把缺失标签视为背景？y/n", "y" if cfg["allow_missing_labels"] else "n").lower() == "y"
+            )
             cfg["dry_run"] = ask("仅预览，不复制？y/n", "y" if cfg["dry_run"] else "n").lower() == "y"
         split_and_copy(cfg)
     except (OSError, ValueError) as exc:
