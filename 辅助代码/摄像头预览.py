@@ -1,3 +1,5 @@
+import sys
+
 import cv2
 
 # 创建摄像头对象，0=第一个USB摄像头，多摄像头可试1、2
@@ -13,7 +15,7 @@ cap.set(cv2.CAP_PROP_FPS, 30)
 # 判断是否成功打开
 if not cap.isOpened():
     print("无法打开摄像头！检查USB接线/设备索引")
-    exit()
+    sys.exit()
 
 print("摄像头已开启，按 q 退出窗口")
 
@@ -29,7 +31,7 @@ while True:
 
     # 按q键退出
     key = cv2.waitKey(1) & 0xFF
-    if key == ord('q'):
+    if key == ord("q"):
         break
 
 # 释放资源

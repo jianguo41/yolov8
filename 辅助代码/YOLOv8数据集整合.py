@@ -1,20 +1,19 @@
 # ==================== 用户配置：运行前修改下面四项 ====================
-IMAGE_ROOT = r"D:\yolo\pictures"          # 总图片目录，递归读取所有子文件夹
-LABEL_ROOT = r"D:\yolo\labels"     # 改成实际标签根目录，递归读取所有子文件夹
-OUTPUT_PARENT = r"D:\yolo"       # 输出文件夹存放的位置
-OUTPUT_NAME = "material_0"            # 输出文件夹名称，内部只有 picture 和 label
+IMAGE_ROOT = r"D:\yolo\pictures"  # 总图片目录，递归读取所有子文件夹
+LABEL_ROOT = r"D:\yolo\labels"  # 改成实际标签根目录，递归读取所有子文件夹
+OUTPUT_PARENT = r"D:\yolo"  # 输出文件夹存放的位置
+OUTPUT_NAME = "material_0"  # 输出文件夹名称，内部只有 picture 和 label
 # ===================================================================
 
+import shutil
 from collections import Counter, defaultdict
 from pathlib import Path
-import shutil
-
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".webp"}
 
 
 def collect_files(root, extensions):
-    """读取根目录及各层子目录中的文件，排序使输出编号稳定。"""
+    """读取根目录及各层子目录中的文件，排序使输出编号稳定。."""
     return sorted(
         (p for p in root.rglob("*") if p.is_file() and p.suffix.lower() in extensions),
         key=lambda p: p.relative_to(root).as_posix().casefold(),
@@ -22,7 +21,7 @@ def collect_files(root, extensions):
 
 
 def merge_dataset(image_root, label_root, output_parent, output_name):
-    """仅复制能确定配对的图片和标签，自动跳过没有 txt 标签的图片。"""
+    """仅复制能确定配对的图片和标签，自动跳过没有 txt 标签的图片。."""
     image_root = Path(image_root).expanduser().resolve()
     label_root = Path(label_root).expanduser().resolve()
     output_parent = Path(output_parent).expanduser().resolve()
@@ -93,9 +92,7 @@ def merge_dataset(image_root, label_root, output_parent, output_name):
     if len(skipped) > 10:
         print(f"其余 {len(skipped) - 10} 张跳过图片不逐一显示。")
     if errors:
-        raise ValueError(
-            f"存在 {len(errors)} 个配对问题，未创建输出目录：\n" + "\n".join(errors[:30])
-        )
+        raise ValueError(f"存在 {len(errors)} 个配对问题，未创建输出目录：\n" + "\n".join(errors[:30]))
     if not pairs:
         raise ValueError("没有可整合的图片和标签，未创建输出目录。请检查标签路径和文件名。")
 
