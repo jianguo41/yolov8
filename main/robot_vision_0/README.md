@@ -77,11 +77,11 @@ python calibrate.py --distance-mm 300 --diameter-px 110 --diameter-mm 30 --width
 
 115200、8N1。协议不变：
 
-| 内容 | 格式 |
-|---|---|
-| 物料，17字节 | `AA BB` + 颜色1字节 + X/Y/Z各float32小端 + `CC DD` |
-| 圆环，13字节 | `BB AA` + 编号1字节 + X/Y各float32小端 + `DD CC` |
-| 接收任务，23字节 | ASCII `CSCS156+123+516+231GOGO` |
+| 内容             | 格式                                               |
+| ---------------- | -------------------------------------------------- |
+| 物料，17字节     | `AA BB` + 颜色1字节 + X/Y/Z各float32小端 + `CC DD` |
+| 圆环，13字节     | `BB AA` + 编号1字节 + X/Y各float32小端 + `DD CC`   |
+| 接收任务，23字节 | ASCII `CSCS156+123+516+231GOGO`                    |
 
 通信颜色：red=1、yellow=2、darkblue=3、green=4、black=5、lightblue=6。
 它与YOLO从0开始的类别编号不同，代码已单独映射。
