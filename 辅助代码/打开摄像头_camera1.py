@@ -16,14 +16,9 @@ try:
 
     # 打印摄像头实际报告的参数
     fourcc = int(cap.get(cv2.CAP_PROP_FOURCC))
-    pixel_format = "".join(
-        chr((fourcc >> (8 * i)) & 0xFF) for i in range(4)
-    )
+    pixel_format = "".join(chr((fourcc >> (8 * i)) & 0xFF) for i in range(4))
     print("采集格式：", pixel_format)
-    print("分辨率：",
-          int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
-          "×",
-          int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+    print("分辨率：", int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), "×", int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
     print("摄像头报告帧率：", cap.get(cv2.CAP_PROP_FPS))
     print("在预览窗口按 q 退出")
 
