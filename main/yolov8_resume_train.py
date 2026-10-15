@@ -2,7 +2,6 @@ from pathlib import Path
 
 from ultralytics import YOLO
 
-
 # ============================================================
 # 断点续训配置区
 #
@@ -18,19 +17,16 @@ CHECKPOINT = r"D:\yolo\yolov8\runs\detect\material_1\weights\last.pt"
 # 核心逻辑：一般不需要修改
 # ============================================================
 
-def main():
-    """从 last.pt 恢复同一个实验的训练。"""
 
+def main():
+    """从 last.pt 恢复同一个实验的训练。."""
     checkpoint = Path(CHECKPOINT).expanduser().resolve()
 
     # 路径和文件名检查，避免把不存在的路径或 best.pt 当成续训断点。
     if not checkpoint.is_file():
         raise FileNotFoundError(f"找不到断点权重：{checkpoint}")
     if checkpoint.name.lower() != "last.pt":
-        raise ValueError(
-            "续训请填写 weights/last.pt；best.pt 用于预测或重新微调，"
-            "不能恢复中断时的优化器和训练轮数。"
-        )
+        raise ValueError("续训请填写 weights/last.pt；best.pt 用于预测或重新微调，不能恢复中断时的优化器和训练轮数。")
 
     model = YOLO(str(checkpoint))
     if model.task != "detect":

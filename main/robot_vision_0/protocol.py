@@ -1,4 +1,5 @@
-"""既有电控协议：保持包头、包尾、颜色编号、float32小端和任务确认规则。"""
+"""既有电控协议：保持包头、包尾、颜色编号、float32小端和任务确认规则。."""
+
 import math
 import queue
 import re
@@ -18,12 +19,12 @@ def float_mm(value):
 
 
 def material_packet(color, x, y, z):
-    """17字节；通信编号与YOLO类别编号不同，必须经COLOR_IDS转换。"""
+    """17字节；通信编号与YOLO类别编号不同，必须经COLOR_IDS转换。."""
     return b"\xaa\xbb" + bytes([COLOR_IDS[color]]) + b"".join(map(float_mm, (x, y, z))) + b"\xcc\xdd"
 
 
 def target_packet(number, x, y):
-    """13字节。保持原协议，圆环高度只显示，不向旧数据包追加字段。"""
+    """13字节。保持原协议，圆环高度只显示，不向旧数据包追加字段。."""
     if number not in (1, 2, 3):
         raise ValueError("圆环编号必须是1/2/3")
     return b"\xbb\xaa" + bytes([number]) + float_mm(x) + float_mm(y) + b"\xdd\xcc"
@@ -90,7 +91,8 @@ class AckBurst:
 
 
 class SerialLink:
-    """一个线程独占串口；坐标按目标替换排队，超时丢弃，防止发送积压旧位置。"""
+    """一个线程独占串口；坐标按目标替换排队，超时丢弃，防止发送积压旧位置。."""
+
     def __init__(self, port, baudrate=115200, enabled=True, serial_factory=None):
         self.port, self.baudrate, self.enabled = port, baudrate, enabled
         self.factory = serial_factory
@@ -125,9 +127,9 @@ class SerialLink:
             factory = self.factory
             if factory is None:
                 from serial import Serial
+
                 factory = Serial
-            port = factory(self.port, self.baudrate, bytesize=8, parity="N", stopbits=1,
-                           timeout=0, write_timeout=0.2)
+            port = factory(self.port, self.baudrate, bytesize=8, parity="N", stopbits=1, timeout=0, write_timeout=0.2)
             self.available = True
             self.status = "UART WAITING 0/2"
             ack = AckBurst()
@@ -137,16 +139,20 @@ class SerialLink:
                 while sent < len(data):
                     n = port.write(data[sent:])
                     if not n:
-                        raise IOError("串口数据包未写完整")
+                        raise OSError("串口数据包未写完整")
                     sent += n
 
             while not self.stop.is_set():
                 if not port.is_open:
-                    raise IOError("串口已断开")
+                    raise OSError("串口已断开")
                 if port.in_waiting:
                     for code in self.parser.feed(port.read(min(port.in_waiting, 4096))):
                         confirmed = self.confirmation.accept(code)
-                        self.status = "UART LOCKED" if self.confirmation.locked_code else f"UART WAITING {self.confirmation.count}/2"
+                        self.status = (
+                            "UART LOCKED"
+                            if self.confirmation.locked_code
+                            else f"UART WAITING {self.confirmation.count}/2"
+                        )
                         if confirmed:
                             print("[UART] 任务码锁定：", confirmed, flush=True)
                             self.confirmed.put(confirmed)
