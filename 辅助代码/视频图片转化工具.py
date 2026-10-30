@@ -2,10 +2,10 @@ import cv2
 import os
 
 # ========== 请修改这里 ==========
-video_path = r"D:\yolo\videos\obstacle.mp4"  # 你的视频路径
-save_dir = r"D:\yolo\pictures"  # 保存图片的文件夹
-file_prefix = "obs_"  # 输出图片的前缀，由用户决定
-N = 8 # 每 N 帧保存一张
+video_path = r"D:\video\blue.mp4"  # 你的视频路径
+save_dir = r"D:\yolo\material2\picture"  # 保存图片的文件夹
+file_prefix = "n_"  # 输出图片的前缀，由用户决定
+N = 5 # 每 N 帧保存一张
 # ===============================
 
 os.makedirs(save_dir, exist_ok=True)

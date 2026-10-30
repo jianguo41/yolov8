@@ -1,8 +1,8 @@
 # ==================== 用户配置：运行前修改下面四项 ====================
-IMAGE_ROOT = r"D:\yolo\pictures"          # 总图片目录，递归读取所有子文件夹
-LABEL_ROOT = r"D:\yolo\labels"     # 改成实际标签根目录，递归读取所有子文件夹
+IMAGE_ROOT = r"D:\yolo\merge\picture"          # 总图片目录，递归读取所有子文件夹
+LABEL_ROOT = r"D:\yolo\merge\label"     # 改成实际标签根目录，递归读取所有子文件夹
 OUTPUT_PARENT = r"D:\yolo"       # 输出文件夹存放的位置
-OUTPUT_NAME = "material_0"            # 输出文件夹名称，内部只有 picture 和 label
+OUTPUT_NAME = "material"            # 输出文件夹名称，内部只有 picture 和 label
 # ===================================================================
 
 from collections import Counter, defaultdict

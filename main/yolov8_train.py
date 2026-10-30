@@ -16,7 +16,7 @@ CONFIG = {
 
     # 数据集 YAML 文件的完整路径。
     # 类别数量、类别名称和图片路径从这个文件中读取。
-    "data": r"D:\yolo\yolov8\datasets\dataset_obstacle\data.yaml",
+    "data": r"D:\yolo\yolov8\datasets\dataset_material_4\data.yaml",
 
     # 模型名称或权重路径。
     # 首次训练一般使用预训练权重，例如 yolov8n.pt、yolov8s.pt。
@@ -28,7 +28,7 @@ CONFIG = {
     "project": r"D:\yolo\yolov8\runs\detect",
 
     # 本次实验的文件夹名称，可以自行修改。
-    "name": "obstacle_0",
+    "name": "material_4",
 
     # ---------------- 基本训练参数 ----------------
 
