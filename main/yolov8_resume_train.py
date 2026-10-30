@@ -11,7 +11,7 @@ from ultralytics import YOLO
 # best.pt 只保存表现最好的模型权重，不能完整恢复中断前的训练过程。
 # ============================================================
 
-CHECKPOINT = r"D:\yolo\yolov8\runs\detect\material_1\weights\last.pt"
+CHECKPOINT = r"D:\yolo\yolov8\runs\detect\material_4\weights\last.pt"
 
 
 # ============================================================

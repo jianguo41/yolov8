@@ -22,18 +22,18 @@ from pathlib import Path
 # ============================================================
 CONFIG = {
     "datasets_root": r"D:\yolo\yolov8\datasets",  # 所有数据集的总目录
-    "dataset_name": "dataset_obstacle",                 # 本次输出文件夹名称
-    "src_image_dir": r"D:\yolo\obstacle\picture",           # 原脚本中的路径，请按实际修改
-    "src_label_dir": r"D:\yolo\obstacle\label",             # None = 自动查找同名标签
+    "dataset_name": "dataset_material_4",                 # 本次输出文件夹名称
+    "src_image_dir": r"D:\yolo\material\picture",           # 原脚本中的路径，请按实际修改
+    "src_label_dir": r"D:\yolo\material\label",             # None = 自动查找同名标签
     # 与 D:\yolo\txt\material_0.txt 的行顺序一致，类别编号从 0 开始。
-    "class_names": ['obstacle'],
+    "class_names": ['red','lightblue','darkblue','green','yellow','black','target1','target2','target3'],
     # class_names[0] 对应标签编号 0，依此类推，不能根据当前出现的类别重新编号。
     "stratify_mode": "min_class",                 # min_class / all / single
     "stratify_class": 0,                          # single 模式关注的类别
     "val_ratio": 0.20,
-    "random_seed": 42,
+    "random_seed": 91,
     "extensions": {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".webp"},
-    "allow_missing_labels": False,                # True = 明确把无标签图片当作背景
+    "allow_missing_labels": True,                # True = 明确把无标签图片当作背景
     # 空 .txt 表示已确认的背景图，始终允许；丢失标签默认报错，避免误当背景。
     "dry_run": False,                             # True = 只检查和预览，不写文件
     "interactive": True,                          # 首次使用建议保持 True
